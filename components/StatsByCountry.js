@@ -6,32 +6,19 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Entypo'
+
+import Icon2 from 'react-native-vector-icons/Ionicons';  
 export default function StatsByCountry({ navigation }) {
   const[countries,setCountries]=useState([])
   const[favcountries,setFavcountries]=useState('')
   const [arrayholder,setArrayholder] =useState([])
   const[text, setText] = useState('')
   useEffect(() => {
-    loaddata()
+    
     getData();
     
   },[])
-  const loaddata=async()=>{
-    try{
-       AsyncStorage.getItem('favoritesity').then(
-      (value) =>{
-        console.log("val",value)
-        }
-        
-    );
-
-    } catch{
-      console.log('error')
-
-    }
-    
-    
-  }
+  
   
   const addfitem =async(country)=>{
     
@@ -48,8 +35,7 @@ export default function StatsByCountry({ navigation }) {
         }
         
   }
-    const showstat=(item)=>{
-       console.log("Its here",item)
+    const showstatsofcountry=(item)=>{
        navigation.navigate('CountryStat',{
          country: item
           })
@@ -74,21 +60,27 @@ axios.request(options).then(function (response) {
 });
   } 
   const searchData= (text)=>  {
-    console.log("It searches")
     const newData = arrayholder.filter(item => {
       const itemData = item.toUpperCase();
       const textData = text.toUpperCase();
       return itemData.indexOf(textData) > -1
     });
-    console.log("It gets back")
 
       setCountries(newData)
       setText(text)
     }
-  
+  const Header =({name, openDrawer})=> (
+  <View style={styles.header}>
+    <TouchableOpacity onPress={()=>openDrawer()}>
+      <Icon2 name="ios-menu" size={32} />
+    </TouchableOpacity>
+    <Text>{name}</Text>
+    <Text style={{width:50}}></Text>
+  </View>
+)
   return (
     <View style={styles.container}>
-      <Button onPress={() => navigation.navigate('Favorite Countries')} title="Go see favorite countries" />
+      <Header name="Stats By Country" openDrawer={navigation.openDrawer}/>
       <View style={{paddingTop: 10}}>
       <Text style={styles.bigBlue}>List Of Countries</Text>
       </View>
@@ -104,7 +96,7 @@ axios.request(options).then(function (response) {
         data={countries}
         renderItem={({item})=>(<View style={{paddingTop: 10}}>
         <TouchableOpacity  style={styles.appButton} >
-        <Text onPress={()=>{showstat(item)}} style={styles.fortext2}>{item}{item.check}</Text>
+        <Text onPress={()=>{showstatsofcountry(item)}} style={styles.fortext2}>{item}{item.check}</Text>
         <Icon style={{}} onPress={()=>{addfitem(item)}} name="star-outlined" color={'yellow'}></Icon>
         </TouchableOpacity>
         
@@ -157,6 +149,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: "center"
   },
+  header:{
+    width:"100%",
+    height:60,
+    flexDirection:"row",
+    justifyContent:"space-between",
+    alignItems:"center",
+    paddingHorizontal:20
+  }
 
   
 });
