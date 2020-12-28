@@ -1,27 +1,25 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
-import { Button, View, Text, StyleSheet } from 'react-native';
+import { Button, View, Text, StyleSheet  } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-export default function CountryStat({ route,navigation }) {
+export default function WorldStats({ navigation }) {
   const[confirmedcases,setConfirmedcases]=useState()
   const[recovered,setRecovered]=useState()
   const[critical,setCritical]=useState()
   const[deaths,setDeaths]=useState()
   const[lastUpdate,setlastUpdate]=useState()
-  const[country,setCountry]=useState()
-  const[countrypopulation,setCountrypopulation]=useState()
+  const[worldpopulation,setWorldpopulation]=useState()
   useEffect(() => {
-    setCountry(route.params.country)
-    console.log(route.params.country)
-    getData(route.params.country);
-    getPopulation(route.params.country)
-  },[route.params.country])
-    function getPopulation(counti) {
-      const options = {
+    
+    getData();
+    getworlddata();
+  },[])
+    
+  function getworlddata(){
+    const options = {
   method: 'GET',
-  url: 'https://world-population.p.rapidapi.com/population',
-  params: {country_name: counti},
+  url: 'https://world-population.p.rapidapi.com/worldpopulation',
   headers: {
     'x-rapidapi-key': '40838189e4mshb5ffc5960cde754p1c2078jsn5b6a894a4513',
     'x-rapidapi-host': 'world-population.p.rapidapi.com'
@@ -29,18 +27,21 @@ export default function CountryStat({ route,navigation }) {
 };
 
 axios.request(options).then(function (response) {
-	console.log(counti,"Population",response.data.body.population);
-  setCountrypopulation(response.data.body.population)
+	setWorldpopulation(response.data.body.world_population);
+  console.log("check",response.data.body.world_population)
 }).catch(function (error) {
 	console.error(error);
 });
-    }
+
+  }
   
-  function getData(counti) {
-    const options = {
+  function getData() {
+    
+
+const options = {
   method: 'GET',
-  url: 'https://covid-19-data.p.rapidapi.com/country',
-  params: {name: counti},
+  url: 'https://covid-19-data.p.rapidapi.com/totals',
+  params: {code: 'it'},
   headers: {
     'x-rapidapi-key': '407dcfb4d8msh6fbe7a6d709521cp1f2c51jsnc0a21c33e440',
     'x-rapidapi-host': 'covid-19-data.p.rapidapi.com'
@@ -48,47 +49,45 @@ axios.request(options).then(function (response) {
 };
 
 axios.request(options).then(function (response) {
-	console.log(response.data[0]);
-  setConfirmedcases(response.data[0].confirmed)
+	setConfirmedcases(response.data[0].confirmed)
   setRecovered(response.data[0].recovered)
   setCritical(response.data[0].critical)
   setDeaths(response.data[0].deaths)
   setlastUpdate(response.data[0].lastUpdate)
+
 }).catch(function (error) {
 	console.error(error);
 });
-    
   }
-  function calculate(value){
-    const val =(100 * value) / countrypopulation
+  function calculatepercentage(value){
+    const val =(100 * value) / worldpopulation
     return val.toFixed(2)
   }
   return (
-    
-      
-      <View style={styles.container}>
-      <Button onPress={() => navigation.goBack()} title="Go back Stats By Country" />
+    <View style={styles.container}>
+      <Button onPress={() => navigation.navigate('Stats By Country')} title="Go To Stats By Country" />
       <View style={styles.paddings}>
-      <Text style={styles.bigBlue}>{country} Cases</Text>
+      <Text style={styles.bigBlue}>World Statistics</Text>
       </View>
       <View style={styles.paddings}>
-      <Text style={styles.fortext2}>Confirmed Cases: {confirmedcases} are {calculate(confirmedcases)}% of {country} population {countrypopulation}</Text>
+      <Text style={styles.fortext}>Confirmed Cases: {confirmedcases} are {calculatepercentage(confirmedcases)}% of World population {worldpopulation} </Text>
       </View>
       <View style={styles.paddings2}>
-      <Text style={styles.fortext2}>Recovered Cases: {recovered} are {calculate(recovered)}% of {country} population {countrypopulation}</Text>
+      <Text style={styles.fortext}>Recovered Cases: {recovered} are {calculatepercentage(recovered)}% of World population {worldpopulation}</Text>
+      </View>
+      <View style={styles.paddings}>
+      <Text style={styles.fortext}>Critical Cases: {critical} are {calculatepercentage(critical)}% of World population {worldpopulation}</Text>
       </View>
       <View style={styles.paddings2}>
-      <Text style={styles.fortext2}>Critical Cases: {critical} are {calculate(critical)}% of {country} population {countrypopulation}</Text>
+      <Text style={styles.fortext}>Deaths: {deaths} are {calculatepercentage(deaths)}% of World population {worldpopulation}</Text>
       </View>
       <View style={styles.paddings2}>
-      <Text style={styles.fortext2}>Deaths Cases: {deaths} are {calculate(deaths)}% of {country} population {countrypopulation}</Text>
+      <Text style={styles.fortext2}>LastUpdated {lastUpdate} </Text>
       </View>
-      <View style={styles.paddings2}>
-      <Text style={styles.fortext3}>lastUpdated {lastUpdate}</Text>
+      <View style={styles.paddings}>
+      <Text style={styles.fortext4}>Developed By SP18-BCS-061 Haris Abbasi</Text>
       </View>
     </View>
-      
-    
   );
 }
 const styles = StyleSheet.create({
@@ -96,6 +95,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 40,
     alignItems: 'center',
+  },
+  paddings: {
+    paddingTop:20,
+  },
+  paddings2: {
+    paddingTop:10,
   },
   
   appButton: {
@@ -114,22 +119,7 @@ const styles = StyleSheet.create({
     borderColor: '#040404',
     backgroundColor: '#E3DC02'
   },
-  paddings: {
-    paddingTop:20,
-  },
-  paddings2: {
-    paddingTop:10,
-  },
   fortext2: {
-    color: 'blue',
-    fontWeight: 'bold',
-    fontSize: 15,
-    borderRadius: 10,
-    borderWidth: 3,
-    borderColor: '#009688',
-    backgroundColor: '#E3DC02'
-  },
-  fortext3: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 15,
@@ -138,7 +128,21 @@ const styles = StyleSheet.create({
     borderColor: '#E4E102',
     backgroundColor: '#030303'
   },
-  
+  fortext: {
+    color: 'blue',
+    fontWeight: 'bold',
+    fontSize: 15,
+    borderRadius: 10,
+    borderWidth: 3,
+    borderColor: '#009688',
+    backgroundColor: '#E3DC02'
+  },
+  fortext4: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
+    backgroundColor: '#040A94'
+  },
 
   
 });
