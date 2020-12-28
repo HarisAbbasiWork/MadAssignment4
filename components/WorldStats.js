@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
-import { Button, View, Text, StyleSheet  } from 'react-native';
+import { Button, View, Text, StyleSheet, TouchableOpacity  } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';  
+
 export default function WorldStats({ navigation }) {
   const[confirmedcases,setConfirmedcases]=useState()
   const[recovered,setRecovered]=useState()
@@ -28,7 +30,6 @@ export default function WorldStats({ navigation }) {
 
 axios.request(options).then(function (response) {
 	setWorldpopulation(response.data.body.world_population);
-  console.log("check",response.data.body.world_population)
 }).catch(function (error) {
 	console.error(error);
 });
@@ -63,9 +64,19 @@ axios.request(options).then(function (response) {
     const val =(100 * value) / worldpopulation
     return val.toFixed(2)
   }
+  const Header =({name, openDrawer})=> (
+  <View style={styles.header}>
+    <TouchableOpacity onPress={()=>openDrawer()}>
+      <Icon name="ios-menu" size={32} />
+    </TouchableOpacity>
+    <Text>{name}</Text>
+    <Text style={{width:50}}></Text>
+  </View>
+)
   return (
     <View style={styles.container}>
-      <Button onPress={() => navigation.navigate('Stats By Country')} title="Go To Stats By Country" />
+    <Header name="World Statistics" openDrawer={navigation.openDrawer}/>
+      
       <View style={styles.paddings}>
       <Text style={styles.bigBlue}>World Statistics</Text>
       </View>
@@ -143,6 +154,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     backgroundColor: '#040A94'
   },
+  header:{
+    width:"100%",
+    height:60,
+    flexDirection:"row",
+    justifyContent:"space-between",
+    alignItems:"center",
+    paddingHorizontal:20
+  }
 
   
 });
