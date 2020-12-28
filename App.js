@@ -8,7 +8,7 @@ import StatsByCountry from './components/StatsByCountry';
 import WorldStats from './components/WorldStats';
 import FavoriteCountries from './components/FavoriteCountries';
 import CountryStat from './components/CountryStat';
-
+import { Fontisto } from '@expo/vector-icons';
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 export default function App() {
@@ -17,10 +17,10 @@ export default function App() {
       <Drawer.Navigator drawerType="slide" drawerStyle = {{
         backgroundColor: 'lightblue',
         width:200,
-      }} initialRouteName="World Stats">
-        <Drawer.Screen name="Stats By Country" component={StackNavigator} />
+      }} initialRouteName="World Stats" >
+        <Drawer.Screen name="Stats By Country" component={StackNavigator}   />
       
-        <Drawer.Screen name="World Stats" component={WorldStats} />
+        <Drawer.Screen name="World Stats" component={WorldStats}  />
         <Drawer.Screen name="Favorite Countries" component={FavoriteCountries} />
       </Drawer.Navigator>
       
@@ -31,6 +31,7 @@ const StackNavigator = () => {
   return (
     <Stack.Navigator
       initialRouteName={"Stats By Country"}
+          
       
     >
       <Stack.Screen
