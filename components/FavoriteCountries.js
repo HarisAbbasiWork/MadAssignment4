@@ -4,6 +4,8 @@ import { Button, View, Text, FlatList,StyleSheet, TouchableOpacity } from 'react
 import AsyncStorage from '@react-native-community/async-storage'
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, useIsFocused } from '@react-navigation/native';
+
+import Icon from 'react-native-vector-icons/Ionicons';  
 export default function FavoriteCountries({ route,navigation }) {
   const[favcountries,setFavcountries]=useState([])
   const[reload,setReload]=useState(0)
@@ -18,7 +20,6 @@ export default function FavoriteCountries({ route,navigation }) {
     try{
       AsyncStorage.getItem('favoritesity').then(
       (value) =>{
-        console.log("val",value)
         var array = value.split(",");
         console.log(array)
         var uniqueArray = [];
@@ -42,7 +43,7 @@ export default function FavoriteCountries({ route,navigation }) {
     
     
   }
-  const showstat=(item)=>{
+  const showstatsofcountry=(item)=>{
        console.log("Its here",item)
        navigation.navigate('CountryStat',{
          country: item
@@ -60,7 +61,6 @@ export default function FavoriteCountries({ route,navigation }) {
       try {
         if(i>0){
           const value = await AsyncStorage.getItem('favoritesity');
-          console.log("Does it run",favcountries, value)
           await AsyncStorage.setItem('favoritesity', value+","+favcountries[i]);
           console.log("Added"+favcountries[i]+"To list") 
 
@@ -78,8 +78,18 @@ export default function FavoriteCountries({ route,navigation }) {
     setReload(reload+1)
        
      }
+     const Header =({name, openDrawer})=> (
+  <View style={styles.header}>
+    <TouchableOpacity onPress={()=>openDrawer()}>
+      <Icon name="ios-menu" size={32} />
+    </TouchableOpacity>
+    <Text>{name}</Text>
+    <Text style={{width:50}}></Text>
+  </View>
+)
   return (
     <View style={styles.container}>
+    <Header name="Favorite Countries" openDrawer={navigation.openDrawer}/>
       <Button onPress={() => navigation.goBack()} title="Go back Stats By Country" />
       <View style={{paddingTop: 10}}>
       <Text style={styles.bigBlue}>List Of Favorite Countries</Text>
@@ -88,7 +98,7 @@ export default function FavoriteCountries({ route,navigation }) {
         data={favcountries}
         renderItem={({item})=>(<View>
         <TouchableOpacity  style={styles.appButton} >
-        <Text onPress={()=>{showstat(item)}} style={styles.fortext2}>{item}</Text>
+        <Text onPress={()=>{showstatsofcountry(item)}} style={styles.fortext2}>{item}</Text>
         <Text onPress={()=>{removeitem(item)}} style={styles.fortext3}>Remove Country</Text>
         </TouchableOpacity>
         
@@ -146,6 +156,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 8,
   },
+  header:{
+    width:"100%",
+    height:60,
+    flexDirection:"row",
+    justifyContent:"space-between",
+    alignItems:"center",
+    paddingHorizontal:20
+  }
 
   
 });
